@@ -1,2 +1,2 @@
-# nodejs-setup-boilerplate
-Setup básico para projetos NodeJS que inclui: ESLint, Husky, Lint-Staged, CommitLint, TypeScript e Jest.
+# polls-project
+Projeto para treinar Clean Architecture, Clean Code, Princípios SOLID, TDD, DDD e boas práticas.

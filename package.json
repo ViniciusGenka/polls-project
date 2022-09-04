@@ -1,7 +1,7 @@
 {
-  "name": "nodejs-setup-boilerplate",
+  "name": "polls-project",
   "version": "1.0.0",
-  "description": "Setup básico para projetos NodeJS que inclui: ESLint, Husky, Lint-Staged, CommitLint, TypeScript e Jest.",
+  "description": "Projeto para treinar Clean Architecture, Clean Code, Princípios SOLID, TDD, DDD e boas práticas.",
   "main": "index.js",
   "scripts": {
     "test": "jest --passWithNoTests",
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ViniciusGenka/nodejs-setup-boilerplate.git"
+    "url": "git+https://github.com/ViniciusGenka/polls-project.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ViniciusGenka/nodejs-setup-boilerplate/issues"
+    "url": "https://github.com/ViniciusGenka/polls-project/issues"
   },
-  "homepage": "https://github.com/ViniciusGenka/nodejs-setup-boilerplate#readme",
+  "homepage": "https://github.com/ViniciusGenka/polls-project#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
