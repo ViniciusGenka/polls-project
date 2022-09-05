@@ -3,11 +3,11 @@ import { MissingFieldError } from '../errors/missingFieldError'
 import { badRequest } from '../helpers/httpHelper'
 export class SignUpController {
   handle (httpRequest: HttpRequest): HttpResponse {
-    if (!httpRequest.body.name) {
-      return badRequest(new MissingFieldError('name'))
-    }
-    if (!httpRequest.body.email) {
-      return badRequest(new MissingFieldError('email'))
+    const requiredFields = ['name', 'email']
+    for (const field of requiredFields) {
+      if (!httpRequest.body[field]) {
+        return badRequest(new MissingFieldError(field))
+      }
     }
   }
 }
