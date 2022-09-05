@@ -1,9 +1,13 @@
 import { SignUpController } from './signup'
 import { MissingFieldError } from '../errors/missingFieldError'
 
+const makeSut = (): SignUpController => {
+  return new SignUpController()
+}
+
 describe('SignUp Controller', () => {
   it('should return status code 400 if no name is provided', () => {
-    const sut = new SignUpController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         email: 'email',
@@ -17,7 +21,7 @@ describe('SignUp Controller', () => {
   })
 
   it('should return status code 400 if no email is provided', () => {
-    const sut = new SignUpController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         name: 'name',
@@ -31,7 +35,7 @@ describe('SignUp Controller', () => {
   })
 
   it('should return status code 400 if no password is provided', () => {
-    const sut = new SignUpController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         name: 'name',
@@ -45,7 +49,7 @@ describe('SignUp Controller', () => {
   })
 
   it('should return status code 400 if no passwordConfirmation is provided', () => {
-    const sut = new SignUpController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         name: 'name',
