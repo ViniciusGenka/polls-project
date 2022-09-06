@@ -95,4 +95,19 @@ describe('SignUp Controller', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidFieldError('email'))
   })
+
+  it('should ensure that EmailValidator\'s isValid method is being called with the requested email', () => {
+    const { sut, emailValidatorStub } = makeSut()
+    const isValidMethodSpy = jest.spyOn(emailValidatorStub, 'isValid')
+    const httpRequest = {
+      body: {
+        name: 'name',
+        email: 'email@example.com',
+        password: 'password',
+        passwordConfirmation: 'password'
+      }
+    }
+    sut.handle(httpRequest)
+    expect(isValidMethodSpy).toHaveBeenCalledWith(httpRequest.body.email)
+  })
 })
