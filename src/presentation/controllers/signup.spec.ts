@@ -1,6 +1,7 @@
 import { SignUpController } from './signup'
 import { MissingFieldError } from '../errors/missingFieldError'
 import { InvalidFieldError } from '../errors/invalidFieldError'
+import { ServerError } from '../errors/serverError'
 import { EmailValidator } from '../protocols/emailValidator'
 
 interface Sut {
@@ -109,5 +110,27 @@ describe('SignUp Controller', () => {
     }
     sut.handle(httpRequest)
     expect(isValidMethodSpy).toHaveBeenCalledWith(httpRequest.body.email)
+  })
+
+  it('should return status code 500 if EmailValidator throws an error', () => {
+    class EmailValidatorStub implements EmailValidator {
+      isValid (email: string): boolean {
+        throw new Error()
+      }
+    }
+    const emailValidatorStub = new EmailValidatorStub()
+    const sut = new SignUpController(emailValidatorStub)
+
+    const httpRequest = {
+      body: {
+        name: 'name',
+        email: 'email@example.com',
+        password: 'password',
+        passwordConfirmation: 'password'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
