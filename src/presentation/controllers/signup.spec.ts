@@ -1,16 +1,34 @@
 import { SignUpController } from './signup'
 import { MissingFieldError } from '../errors/missingFieldError'
+import { InvalidFieldError } from '../errors/invalidFieldError'
+import { EmailValidator } from '../protocols/emailValidator'
 
-const makeSut = (): SignUpController => {
-  return new SignUpController()
+interface Sut {
+  sut: SignUpController
+  emailValidatorStub: EmailValidator
+}
+
+const makeSut = (): Sut => {
+  class EmailValidatorStub implements EmailValidator {
+    isValid (email: string): boolean {
+      return true
+    }
+  }
+
+  const emailValidatorStub = new EmailValidatorStub()
+  const sut = new SignUpController(emailValidatorStub)
+  return {
+    sut,
+    emailValidatorStub
+  }
 }
 
 describe('SignUp Controller', () => {
   it('should return status code 400 if no name is provided', () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
     const httpRequest = {
       body: {
-        email: 'email',
+        email: 'email@example.com',
         password: 'password',
         passwordConfirmation: 'password'
       }
@@ -21,7 +39,7 @@ describe('SignUp Controller', () => {
   })
 
   it('should return status code 400 if no email is provided', () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
     const httpRequest = {
       body: {
         name: 'name',
@@ -35,11 +53,11 @@ describe('SignUp Controller', () => {
   })
 
   it('should return status code 400 if no password is provided', () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
     const httpRequest = {
       body: {
         name: 'name',
-        email: 'email',
+        email: 'email@example.com',
         passwordConfirmation: 'password'
       }
     }
@@ -49,16 +67,32 @@ describe('SignUp Controller', () => {
   })
 
   it('should return status code 400 if no passwordConfirmation is provided', () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
     const httpRequest = {
       body: {
         name: 'name',
-        email: 'email',
+        email: 'email@example.com',
         password: 'password'
       }
     }
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingFieldError('passwordConfirmation'))
+  })
+
+  it('should return status code 400 if an invalid email is provided', () => {
+    const { sut, emailValidatorStub } = makeSut()
+    jest.spyOn(emailValidatorStub, 'isValid').mockReturnValue(false)
+    const httpRequest = {
+      body: {
+        name: 'name',
+        email: 'email@example.com',
+        password: 'password',
+        passwordConfirmation: 'password'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidFieldError('email'))
   })
 })
