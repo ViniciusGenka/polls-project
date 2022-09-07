@@ -19,6 +19,10 @@ const makeEmailValidator = () => {
 
 const makePasswordValidator = () => {
   class PasswordValidatorStub implements PasswordValidator {
+    isValid (password: string): boolean {
+      return true
+    }
+
     confirmationIsMatching (password: string, passwordConfirmation: string): boolean {
       return true
     }
@@ -108,6 +112,22 @@ describe('SignUp Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidFieldError('passwordConfirmation'))
+  })
+
+  it('should return status code 400 if an invalid password is provided', () => {
+    const { sut, passwordValidatorStub } = makeSut()
+    jest.spyOn(passwordValidatorStub, 'isValid').mockReturnValue(false)
+    const httpRequest = {
+      body: {
+        name: 'name',
+        email: 'email@example.com',
+        password: 'password',
+        passwordConfirmation: 'password'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidFieldError('password'))
   })
 
   it('should return status code 400 if an invalid email is provided', () => {
