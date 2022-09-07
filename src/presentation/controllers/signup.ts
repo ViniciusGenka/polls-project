@@ -2,8 +2,7 @@ import { Controller } from '../protocols/controller'
 import { HttpRequest, HttpResponse } from '../protocols/http'
 import { MissingFieldError } from '../errors/missingFieldError'
 import { InvalidFieldError } from '../errors/invalidFieldError'
-import { ServerError } from '../errors/serverError'
-import { badRequest } from '../helpers/httpHelper'
+import { badRequest, serverError } from '../helpers/httpHelper'
 import { EmailValidator } from '../protocols/emailValidator'
 
 export class SignUpController implements Controller {
@@ -25,10 +24,7 @@ export class SignUpController implements Controller {
         return badRequest(new InvalidFieldError('email'))
       }
     } catch (error) {
-      return {
-        statusCode: 500,
-        body: new ServerError()
-      }
+      return serverError()
     }
   }
 }
