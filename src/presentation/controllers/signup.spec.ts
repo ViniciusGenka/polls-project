@@ -1,10 +1,11 @@
 import { SignUpController } from './signup'
 import { MissingFieldError, InvalidFieldError, ServerError } from '../errors'
-import { EmailValidator } from '../protocols'
+import { EmailValidator, PasswordValidator } from '../protocols'
 
 interface Sut {
   sut: SignUpController
-  emailValidatorStub: EmailValidator
+  emailValidatorStub: EmailValidator,
+  passwordValidatorStub: PasswordValidator
 }
 
 const makeEmailValidator = () => {
@@ -16,12 +17,23 @@ const makeEmailValidator = () => {
   return new EmailValidatorStub()
 }
 
+const makePasswordValidator = () => {
+  class PasswordValidatorStub implements PasswordValidator {
+    confirmationIsMatching (password: string, passwordConfirmation: string): boolean {
+      return true
+    }
+  }
+  return new PasswordValidatorStub()
+}
+
 const makeSut = (): Sut => {
   const emailValidatorStub = makeEmailValidator()
-  const sut = new SignUpController(emailValidatorStub)
+  const passwordValidatorStub = makePasswordValidator()
+  const sut = new SignUpController(emailValidatorStub, passwordValidatorStub)
   return {
     sut,
-    emailValidatorStub
+    emailValidatorStub,
+    passwordValidatorStub
   }
 }
 
@@ -83,7 +95,8 @@ describe('SignUp Controller', () => {
   })
 
   it('should return status code 400 if passwordConfirmation doesn\'t match the password', () => {
-    const { sut } = makeSut()
+    const { sut, passwordValidatorStub } = makeSut()
+    jest.spyOn(passwordValidatorStub, 'confirmationIsMatching').mockReturnValue(false)
     const httpRequest = {
       body: {
         name: 'name',

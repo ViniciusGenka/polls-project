@@ -1,11 +1,13 @@
-import { Controller, HttpRequest, HttpResponse, EmailValidator } from '../protocols'
+import { Controller, HttpRequest, HttpResponse, EmailValidator, PasswordValidator } from '../protocols'
 import { MissingFieldError, InvalidFieldError } from '../errors'
 import { badRequest, serverError } from '../helpers/httpHelper'
 
 export class SignUpController implements Controller {
   private readonly emailValidator: EmailValidator
-  constructor (emailValidator: EmailValidator) {
+  private readonly passwordValidator: PasswordValidator
+  constructor (emailValidator: EmailValidator, passwordValidator: PasswordValidator) {
     this.emailValidator = emailValidator
+    this.passwordValidator = passwordValidator
   }
 
   handle (httpRequest: HttpRequest): HttpResponse {
@@ -17,7 +19,8 @@ export class SignUpController implements Controller {
         }
       }
       const { email, password, passwordConfirmation } = httpRequest.body
-      if (password !== passwordConfirmation) {
+      const passwordConfirmationIsMatching = this.passwordValidator.confirmationIsMatching(password, passwordConfirmation)
+      if (!passwordConfirmationIsMatching) {
         return badRequest(new InvalidFieldError('passwordConfirmation'))
       }
       const emailIsValid = this.emailValidator.isValid(email)
