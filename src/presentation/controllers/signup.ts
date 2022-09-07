@@ -1,7 +1,6 @@
 import { Controller } from '../protocols/controller'
 import { HttpRequest, HttpResponse } from '../protocols/http'
-import { MissingFieldError } from '../errors/missingFieldError'
-import { InvalidFieldError } from '../errors/invalidFieldError'
+import { MissingFieldError, InvalidFieldError } from '../errors'
 import { badRequest, serverError } from '../helpers/httpHelper'
 import { EmailValidator } from '../protocols/emailValidator'
 

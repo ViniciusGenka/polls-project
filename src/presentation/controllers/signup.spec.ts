@@ -1,7 +1,5 @@
 import { SignUpController } from './signup'
-import { MissingFieldError } from '../errors/missingFieldError'
-import { InvalidFieldError } from '../errors/invalidFieldError'
-import { ServerError } from '../errors/serverError'
+import { MissingFieldError, InvalidFieldError, ServerError } from '../errors'
 import { EmailValidator } from '../protocols/emailValidator'
 
 interface Sut {
