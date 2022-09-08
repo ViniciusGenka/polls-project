@@ -130,6 +130,23 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new InvalidFieldError('password'))
   })
 
+  it('should ensure that PasswordValidator\'s isValid and confirmationIsMatching methods are being called with the requested password and password confirmation', () => {
+    const { sut, passwordValidatorStub } = makeSut()
+    const isValidMethodSpy = jest.spyOn(passwordValidatorStub, 'isValid')
+    const confirmationIsMatchingMethodSpy = jest.spyOn(passwordValidatorStub, 'confirmationIsMatching')
+    const httpRequest = {
+      body: {
+        name: 'name',
+        email: 'email@example.com',
+        password: 'password',
+        passwordConfirmation: 'password'
+      }
+    }
+    sut.handle(httpRequest)
+    expect(isValidMethodSpy).toHaveBeenCalledWith(httpRequest.body.password)
+    expect(confirmationIsMatchingMethodSpy).toHaveBeenCalledWith(httpRequest.body.password, httpRequest.body.passwordConfirmation)
+  })
+
   it('should return status code 400 if an invalid email is provided', () => {
     const { sut, emailValidatorStub } = makeSut()
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValue(false)
