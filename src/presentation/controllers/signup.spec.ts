@@ -147,6 +147,42 @@ describe('SignUp Controller', () => {
     expect(confirmationIsMatchingMethodSpy).toHaveBeenCalledWith(httpRequest.body.password, httpRequest.body.passwordConfirmation)
   })
 
+  it('should return status code 500 if PasswordValidator throws an error in isValid method', () => {
+    const { sut, passwordValidatorStub } = makeSut()
+    jest.spyOn(passwordValidatorStub, 'isValid').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpRequest = {
+      body: {
+        name: 'name',
+        email: 'email@example.com',
+        password: 'password',
+        passwordConfirmation: 'password'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  it('should return status code 500 if PasswordValidator throws an error in confirmationIsMatching method', () => {
+    const { sut, passwordValidatorStub } = makeSut()
+    jest.spyOn(passwordValidatorStub, 'confirmationIsMatching').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpRequest = {
+      body: {
+        name: 'name',
+        email: 'email@example.com',
+        password: 'password',
+        passwordConfirmation: 'password'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
+
   it('should return status code 400 if an invalid email is provided', () => {
     const { sut, emailValidatorStub } = makeSut()
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValue(false)
