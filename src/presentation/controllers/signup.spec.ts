@@ -1,11 +1,14 @@
 import { SignUpController } from './signup'
 import { MissingFieldError, InvalidFieldError, ServerError } from '../errors'
 import { EmailValidator, PasswordValidator } from '../protocols'
+import { UserAccountModel } from '../../domain/models/userAccount'
+import { CreateUserAccount, CreateUserAccountModel } from '../../domain/useCases/createUserAccount'
 
 interface Sut {
   sut: SignUpController
   emailValidatorStub: EmailValidator,
-  passwordValidatorStub: PasswordValidator
+  passwordValidatorStub: PasswordValidator,
+  createUserAccountStub: CreateUserAccount
 }
 
 const makeEmailValidator = () => {
@@ -30,14 +33,31 @@ const makePasswordValidator = () => {
   return new PasswordValidatorStub()
 }
 
+const makeCreateUserAccount = () => {
+  class CreateUserAccountStub implements CreateUserAccount {
+    execute (userAccount: CreateUserAccountModel): UserAccountModel {
+      const fakeAccount = {
+        id: 'id',
+        name: 'name',
+        email: 'email',
+        password: 'password'
+      }
+      return fakeAccount
+    }
+  }
+  return new CreateUserAccountStub()
+}
+
 const makeSut = (): Sut => {
   const emailValidatorStub = makeEmailValidator()
   const passwordValidatorStub = makePasswordValidator()
-  const sut = new SignUpController(emailValidatorStub, passwordValidatorStub)
+  const createUserAccountStub = makeCreateUserAccount()
+  const sut = new SignUpController(emailValidatorStub, passwordValidatorStub, createUserAccountStub)
   return {
     sut,
     emailValidatorStub,
-    passwordValidatorStub
+    passwordValidatorStub,
+    createUserAccountStub
   }
 }
 
@@ -230,5 +250,25 @@ describe('SignUp Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  it('should ensure that CreateUserAccount is being called with the provided user data', () => {
+    const { sut, createUserAccountStub } = makeSut()
+    const executeMethodSpy = jest.spyOn(createUserAccountStub, 'execute')
+    const userAccountProps = {
+      name: 'name',
+      email: 'email@example.com',
+      password: 'password',
+      passwordConfirmation: 'password'
+    }
+    const httpRequest = {
+      body: userAccountProps
+    }
+    sut.handle(httpRequest)
+    expect(executeMethodSpy).toHaveBeenCalledWith({
+      name: userAccountProps.name,
+      email: userAccountProps.email,
+      password: userAccountProps.password
+    })
   })
 })
