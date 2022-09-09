@@ -1,13 +1,16 @@
 import { Controller, HttpRequest, HttpResponse, EmailValidator, PasswordValidator } from '../protocols'
 import { MissingFieldError, InvalidFieldError } from '../errors'
 import { badRequest, serverError } from '../helpers/httpHelper'
+import { CreateUserAccount } from '../../domain/useCases/createUserAccount'
 
 export class SignUpController implements Controller {
   private readonly emailValidator: EmailValidator
   private readonly passwordValidator: PasswordValidator
-  constructor (emailValidator: EmailValidator, passwordValidator: PasswordValidator) {
+  private readonly createUserAccount: CreateUserAccount
+  constructor (emailValidator: EmailValidator, passwordValidator: PasswordValidator, createUserAccount: CreateUserAccount) {
     this.emailValidator = emailValidator
     this.passwordValidator = passwordValidator
+    this.createUserAccount = createUserAccount
   }
 
   handle (httpRequest: HttpRequest): HttpResponse {
@@ -18,7 +21,7 @@ export class SignUpController implements Controller {
           return badRequest(new MissingFieldError(field))
         }
       }
-      const { email, password, passwordConfirmation } = httpRequest.body
+      const { name, email, password, passwordConfirmation } = httpRequest.body
       const passwordIsValid = this.passwordValidator.isValid(password)
       if (!passwordIsValid) {
         return badRequest(new InvalidFieldError('password'))
@@ -31,6 +34,11 @@ export class SignUpController implements Controller {
       if (!emailIsValid) {
         return badRequest(new InvalidFieldError('email'))
       }
+      this.createUserAccount.execute({
+        name,
+        email,
+        password
+      })
     } catch (error) {
       return serverError()
     }
