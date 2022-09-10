@@ -7,5 +7,5 @@ export interface CreateUserAccountModel {
 }
 
 export interface CreateUserAccount {
-  execute (userAccount: CreateUserAccountModel): UserAccountModel
+  execute (userAccount: CreateUserAccountModel): Promise<UserAccountModel>
 }
