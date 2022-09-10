@@ -37,7 +37,7 @@ const makeCreateUserAccount = () => {
       const fakeAccount = {
         id: 'id',
         name: 'name',
-        email: 'email',
+        email: 'email@example.com',
         password: 'password'
       }
       return fakeAccount
@@ -286,5 +286,25 @@ describe('SignUp Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  it('should return status code 200 if SignUpController don\'t throw any error', () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        name: 'name',
+        email: 'email@example.com',
+        password: 'password',
+        passwordConfirmation: 'password'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      id: 'id',
+      name: 'name',
+      email: 'email@example.com',
+      password: 'password'
+    })
   })
 })
