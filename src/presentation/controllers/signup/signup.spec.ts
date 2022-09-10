@@ -1,6 +1,6 @@
 import { SignUpController } from './signup'
 import { MissingFieldError, InvalidFieldError, ServerError } from '../../errors'
-import { EmailValidator, PasswordValidator, CreateUserAccount, CreateUserAccountModel, UserAccountModel } from '../../controllers/signup/signupProtocols'
+import { EmailValidator, PasswordValidator, CreateUserAccount, CreateUserAccountModel, UserAccountModel } from './signup-protocols'
 
 interface Sut {
   sut: SignUpController

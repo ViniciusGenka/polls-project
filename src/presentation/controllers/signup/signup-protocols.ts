@@ -1,0 +1,5 @@
+export * from '../../protocols/index'
+export * from '../../../domain/models/user-account'
+export * from '../../../domain/useCases/create-user-account'
+export * from '../../protocols/email-validator'
+export * from '../../protocols/password-validator'

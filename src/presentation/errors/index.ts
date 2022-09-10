@@ -1,3 +1,3 @@
-export * from './invalidFieldError'
-export * from './missingFieldError'
-export * from './serverError'
+export * from './invalid-field-error'
+export * from './missing-field-error'
+export * from './server-error'

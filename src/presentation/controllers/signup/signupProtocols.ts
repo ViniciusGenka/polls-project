@@ -1,5 +1,0 @@
-export * from '../../protocols/index'
-export * from '../../../domain/models/userAccount'
-export * from '../../../domain/useCases/createUserAccount'
-export * from '../../protocols/emailValidator'
-export * from '../../protocols/passwordValidator'
